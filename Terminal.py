@@ -5,6 +5,7 @@ import time
 
 from Rewards.BagReward import BagReward
 from Rewards.AnthillReward import AnthillReward
+from Rewards.BiterAntReward import BiterAntReward
 
 TERMINAL = blessed.Terminal()
 
@@ -28,13 +29,14 @@ class Clicker:
         self.food = 0
         self.terminal = TERMINAL
         self.load = 0
-        self.points = 0
+        self.points = 10
         self.max_load = 1
+        self.biter_ant = 0
         self.anthills = 1
         self.rewards = []
         self.rewards.append(BagReward())
+        self.rewards.append(BiterAntReward())
         self.rewards.append(AnthillReward())
-        debug("Arrancando")
 
     def draw(self):
         print(TERMINAL.clear())
@@ -66,6 +68,10 @@ class Clicker:
         self.draw_anthills()
         self.draw_rewards()
         self.draw_points()
+
+        self.draw_rewards()
+
+
 
         if self.food > 0:
             print(
@@ -142,12 +148,18 @@ class Clicker:
                 elif val.lower() == "1":
                     if not self.rewards[0].apply_reward(self):
                         continue
-                #elif val.lower() == "2":
-                 #   if not self.rewards[1].apply_reward(self):
+                elif val.lower() == "2":
+                    if not self.rewards[1].apply_reward(self):
+                        continue
+                #elif val.lower() == "4":
+                 #   if not self.rewards[3].apply_reward(self):
                   #      continue
 
                 self.draw_base_hormiguero_x = int((TERMINAL.width - self.draws_size_x) / 2)
                 self.draw_base_hormiguero_y = int((TERMINAL.height - self.draws_size_y) / 6 * 5)
+
+
+                
 
         print(TERMINAL.clear())
 

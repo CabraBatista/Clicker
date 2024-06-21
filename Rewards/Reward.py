@@ -13,18 +13,22 @@ class Reward:
         self.name = None
         self.description = None
         self.reward_status = RewardStatus.NOT_PURCHASED
+        self.amount = 0
 
     def draw(self, terminal, reward_number) -> None:
-        box_length = len(self.name)*3
+        box_length = 25
         color = terminal.yellow
         if self.reward_status == RewardStatus.PURCHASED:
             color = terminal.green
         elif self.reward_status == RewardStatus.NO_MONEY:
             color = terminal.red
 
-        print(terminal.move_xy(reward_number * 20, 0) + color(" " + "-"*box_length))
-        print(terminal.move_xy(reward_number * 20, 1) + color("|" + " "*len(self.name) + self.name + " "*len(self.name) + "|" ))
-        print(terminal.move_xy(reward_number * 20, 2) + color(" " + "-"*box_length))
+        amount_price = "$:" + str(self.price) + "  Amount:" + str(self.amount)
+
+        print(terminal.move_xy(reward_number * 32, 0) + color(" " + "-"*box_length))
+        print(terminal.move_xy(reward_number * 32, 1) + color("|" + self.name.center(box_length) + "|" ))
+        print(terminal.move_xy(reward_number * 32, 2) + color(" " + "-"*box_length))
+        print(terminal.move_xy(reward_number * 32, 3) + color(amount_price.center(box_length)))
 
     
     def set_not_purchased(self):
