@@ -115,7 +115,7 @@ class Clicker:
             TERMINAL.move_xy(self.draw_base_hormiguero_x, self.draw_base_hormiguero_y)
             + " /                       \==============---------==========------===----------================"
         )
-
+        self.draw_points()
         if self.food > 0:
             print(
                 TERMINAL.move_xy(
@@ -136,7 +136,8 @@ class Clicker:
 
                 val = TERMINAL.inkey(timeout=1)
                 if val.lower() == " ":
-                    self.food += 1
+                    if self.can_bite_leaf():
+                        self.food += 1
                 elif val.lower() == "d":
                     if self.ant_x != 89:
                         self.ant_x += 1
@@ -147,6 +148,8 @@ class Clicker:
                         self.walk()
                 elif val.lower() == "e":
                     self.load_food()
+                elif val.lower() == "r":
+                    self.drop_food()
                 self.draw_base_hormiguero_x = int(
                     (TERMINAL.width - self.draws_size_x) / 2
                 )
@@ -156,9 +159,13 @@ class Clicker:
 
         print(TERMINAL.clear())
 
+    def can_bite_leaf(self):
+        return self.x == 94 and self.y == -1
+
     def can_load_food(self):
         return (
-            self.x == 90
+            self.x >= 90
+            and self.x <= 94
             and self.y == -1
             and self.load < self.max_load
             and self.food >= 1
@@ -168,6 +175,30 @@ class Clicker:
         if self.can_load_food():
             self.load += 1
             self.food -= 1
+
+    def can_drop_food(self):
+        return self.load > 0 and self.x > 10 and self.x < 16 and self.y == -5
+
+    def drop_food(self):
+        if self.can_drop_food():
+            self.points += self.load
+            self.load = 0
+
+    def draw_points(self):
+        print(
+            TERMINAL.move_xy(
+                self.draw_base_hormiguero_x + 5, self.draw_base_hormiguero_y - 20
+            )
+            + f"POINTS: {self.points}"
+        )
+        if self.points > 0:
+            if self.points < 100:
+                print(
+                    TERMINAL.move_xy(
+                        self.draw_base_hormiguero_x + 5, self.draw_base_hormiguero_y
+                    )
+                    + TERMINAL.forestgreen("█")
+                )
 
     def walk(self):
         if self.ant_x >= 10 and self.ant_x <= 16:
