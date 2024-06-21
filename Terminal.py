@@ -127,6 +127,21 @@ class Clicker:
                 )
                 + TERMINAL.forestgreen("x" + str(self.food))
             )
+        if self.load > 0:
+            print(
+                TERMINAL.move_xy(
+                    self.ant_x + self.draw_base_hormiguero_x,
+                    self.draw_base_hormiguero_y + self.ant_y - 1,
+                )
+                + TERMINAL.forestgreen("█")
+            )
+            print(
+                TERMINAL.move_xy(
+                    self.ant_x + self.draw_base_hormiguero_x,
+                    self.draw_base_hormiguero_y + self.ant_y - 2,
+                )
+                + str(self.load)
+            )
 
     def loop(self):
         with TERMINAL.cbreak():
@@ -160,13 +175,12 @@ class Clicker:
         print(TERMINAL.clear())
 
     def can_bite_leaf(self):
-        return self.x == 94 and self.y == -1
+        return self.ant_x == 89
 
     def can_load_food(self):
         return (
-            self.x >= 90
-            and self.x <= 94
-            and self.y == -1
+            self.ant_x == 89
+            and self.ant_y == -1
             and self.load < self.max_load
             and self.food >= 1
         )
@@ -177,7 +191,9 @@ class Clicker:
             self.food -= 1
 
     def can_drop_food(self):
-        return self.load > 0 and self.x > 10 and self.x < 16 and self.y == -5
+        return (
+            self.load > 0 and self.ant_x > 10 and self.ant_x < 16 and self.ant_y == -5
+        )
 
     def drop_food(self):
         if self.can_drop_food():
