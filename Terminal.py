@@ -31,8 +31,8 @@ class Clicker:
         print(TERMINAL.move_xy(50, 37) + " /                       \==============---------==========------===----------================" )
 
         if self.food > 0:
-            print(TERMINAL.move_xy(191, 36) + TERMINAL.forestgreen("█") +
-                  TERMINAL.move_xy(190, 35) + TERMINAL.forestgreen("x" + str(self.food)))
+            print(TERMINAL.move_xy(141, 36) + TERMINAL.forestgreen("█") +
+                  TERMINAL.move_xy(140, 35) + TERMINAL.forestgreen("x" + str(self.food)))
 
     def keys(self):
         with TERMINAL.cbreak():
