@@ -182,35 +182,77 @@ class Clicker:
 
         print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 6, self.draw_base_hormiguero_y - 8)
                 + TERMINAL.goldenrod1(TERMINAL.bold(f"POINTS: {self.points}")))
-
-        if self.points > 0:
-            print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 5, self.draw_base_hormiguero_y)
-                + TERMINAL.forestgreen("█"))
-        if self.points >= 5:
-            print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 6, self.draw_base_hormiguero_y) +                       TERMINAL.forestgreen("█"))
-        if self.points >= 10:
-            print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 7, self.draw_base_hormiguero_y) +
-                TERMINAL.forestgreen("█"))
-        if self.points >= 15:
-            print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 5, self.draw_base_hormiguero_y - 1) +
-                TERMINAL.forestgreen("█"))
-        if self.points >= 20:
-            print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 6, self.draw_base_hormiguero_y - 1) +
-                TERMINAL.forestgreen("█"))
-        if self.points >= 30:
-            print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 8, self.draw_base_hormiguero_y) +
-                TERMINAL.forestgreen("█"))
-        if self.points >= 40:
-            print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 9, self.draw_base_hormiguero_y) +
-                TERMINAL.forestgreen("█"))
-        if self.points >= 45:
-            print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 7, self.draw_base_hormiguero_y - 1) +
-                TERMINAL.forestgreen("█"))
-                
-                       
         
+        almacenamiento = [
+            (0, 3, 0, TERMINAL.forestgreen("█")),
+            (8, 4, 0, TERMINAL.webgreen("█")),
+            (16, 5, 0, TERMINAL.green3("█")),
+            (24, 6, 0, TERMINAL.forestgreen("█")),
+            (32, 7, 0, TERMINAL.webgreen("█")),
+            (40, 8, 0, TERMINAL.forestgreen("█")),
+            (48, 9, 0, TERMINAL.webgreen("█")),
+            (56, 10, 0, TERMINAL.webgreen("█")),
+            (64, 11, 0, TERMINAL.forestgreen("█")),
+            (72, 12, 0, TERMINAL.green3("█")),
+            (80, 13, 0, TERMINAL.webgreen("█")),
+            (88, 14, 0, TERMINAL.forestgreen("█")),
+            (96, 15, 0, TERMINAL.forestgreen("█")),
+            (104, 16, 0, TERMINAL.green3("█")),
+            (112, 17, 0, TERMINAL.webgreen("█")),
+            (120, 18, 0, TERMINAL.forestgreen("█")),
+            (128, 19, 0, TERMINAL.green3("█")),
+            (136, 20, 0, TERMINAL.green3("█")),
+            (144, 21, 0, TERMINAL.green3("█")),
+            (152, 22, 0, TERMINAL.forestgreen("█")),
+            (160, 23, 0, TERMINAL.webgreen("█")),
+           
+            (168, 4, -1, TERMINAL.forestgreen("█")),
+            (176, 5, -1, TERMINAL.green3("█")),
+            (185, 6, -1, TERMINAL.webgreen("█")),
+            (193, 7, -1, TERMINAL.green3("█")),
+            (201, 8, -1, TERMINAL.webgreen("█")),
+            (209, 9, -1, TERMINAL.webgreen("█")),
+            (217, 10, -1, TERMINAL.green3("█")),
+            (225, 11, -1, TERMINAL.forestgreen("█")),
+            (233, 12, -1, TERMINAL.green3("█")),
+            (241, 13, -1, TERMINAL.webgreen("█")),
+            (249, 14, -1, TERMINAL.forestgreen("█")),
+            (257, 15, -1, TERMINAL.webgreen("█")),
+            (265, 16, -1, TERMINAL.forestgreen("█")),
+            (273, 17, -1, TERMINAL.green3("█")),
+            (281, 18, -1, TERMINAL.green3("█")),
+            (289, 19, -1, TERMINAL.green3("█")),
+            (297, 20, -1, TERMINAL.webgreen("█")),
+            
+            (305, 6, -2, TERMINAL.green3("█")),
+            (313, 7, -2, TERMINAL.forestgreen("█")),
+            (321, 8, -2, TERMINAL.green3("█")),
+            (328, 9, -2, TERMINAL.forestgreen("█")),
+            (337, 10, -2, TERMINAL.webgreen("█")),
+            (345, 11, -2, TERMINAL.webgreen("█")),
+            (353, 12, -2, TERMINAL.webgreen("█")),
+            (361, 13, -2, TERMINAL.green3("█")),
+            (369, 14, -2, TERMINAL.forestgreen("█")),
+            (377, 15, -2, TERMINAL.forestgreen("█")),
+            (385, 16, -2, TERMINAL.webgreen("█")),
+            (393, 17, -2, TERMINAL.green3("█")),
+            (401, 18, -2, TERMINAL.webgreen("█")),
 
-
+            (409, 8, -3, TERMINAL.forestgreen("█")),
+            (417, 9, -3, TERMINAL.forestgreen("█")),
+            (425, 10, -3, TERMINAL.webgreen("█")),
+            (433, 11, -3, TERMINAL.webgreen("█")),
+            (441, 12, -3, TERMINAL.forestgreen("█")),
+            (449, 13, -3, TERMINAL.webgreen("█")),
+            (457, 14, -3, TERMINAL.green3("█")),
+            (465, 15, -3, TERMINAL.green3("█")),
+        ]
+        
+        for limit, x, y, char in almacenamiento:
+            if self.points > limit:
+                print(TERMINAL.move_xy(self.draw_base_hormiguero_x + x, self.draw_base_hormiguero_y + y) +
+                      char)
+        
     def walk(self):
         if self.ant_x >= 10 and self.ant_x <= 16:
             self.ant_y = -5
