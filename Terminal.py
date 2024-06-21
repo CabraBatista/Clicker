@@ -6,19 +6,20 @@ TERMINAL = blessed.Terminal()
 
 class Clicker:
     def __init__(self):
-       self.x = 61
-       self.y = 32
-       self.food = 0
-
+       
        self.draws_size_x = 120
        self.draws_size_y = 9
-
+       
        self.draw_base_hormiguero_x = int((TERMINAL.width - self.draws_size_x) / 2)
        self.draw_base_hormiguero_y = int((TERMINAL.height - self.draws_size_y) / 2)
 
+       self.x =  11
+       self.y = -5
+       self.food = 0
+
     def draw(self):
         print(TERMINAL.clear())
-        print(TERMINAL.move_xy(self.x, self.y) + TERMINAL.orangered4("█") + TERMINAL.sienna("█"))
+        print(TERMINAL.move_xy(self.x + self.draw_base_hormiguero_x, self.y + self.draw_base_hormiguero_y) + TERMINAL.orangered4("█") + TERMINAL.sienna("█"))
 
         print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 100, self.draw_base_hormiguero_y - 7) + TERMINAL.limegreen(".\^/."))
         print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 97, self.draw_base_hormiguero_y - 6) + TERMINAL.limegreen("'. |`|/| ." ))
