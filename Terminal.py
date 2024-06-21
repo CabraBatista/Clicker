@@ -9,6 +9,11 @@ from Rewards.AnthillReward import AnthillReward
 TERMINAL = blessed.Terminal()
 
 
+def debug(*textos):
+    with open("/tmp/debugblessed.txt", "at") as fh:
+        fh.write(f"{time.ctime()} {' '.join(map(str, textos))}\n")
+
+
 class Clicker:
     def __init__(self):
 
@@ -23,82 +28,44 @@ class Clicker:
         self.food = 0
         self.terminal = TERMINAL
         self.load = 0
-        self.points = 100
+        self.points = 0
         self.max_load = 1
         self.anthills = 1
         self.rewards = []
         self.rewards.append(BagReward())
         self.rewards.append(AnthillReward())
-        self.max_load = 1
+        debug("Arrancando")
 
     def draw(self):
         print(TERMINAL.clear())
-        self.draw_rewards()
-        print(
-            TERMINAL.move_xy(
-                self.ant_x + self.draw_base_hormiguero_x,
-                self.ant_y + self.draw_base_hormiguero_y,
-            )
-            + TERMINAL.orangered4("█")
-            + TERMINAL.sienna("█")
-        )
+        
+        print(TERMINAL.move_xy(self.ant_x + self.draw_base_hormiguero_x,self.ant_y + self.draw_base_hormiguero_y,)
+            + TERMINAL.orangered4("█") + TERMINAL.sienna("█"))
 
-        print(
-            TERMINAL.move_xy(
-                self.draw_base_hormiguero_x + 100, self.draw_base_hormiguero_y - 7
-            )
-            + TERMINAL.limegreen(".\^/.")
-        )
-        print(
-            TERMINAL.move_xy(
-                self.draw_base_hormiguero_x + 97, self.draw_base_hormiguero_y - 6
-            )
-            + TERMINAL.limegreen("'. |`|/| .")
-        )
-        print(
-            TERMINAL.move_xy(
-                self.draw_base_hormiguero_x + 97, self.draw_base_hormiguero_y - 5
-            )
-            + TERMINAL.limegreen("'|\|\|'|/|")
-        )
-        print(
-            TERMINAL.move_xy(
-                self.draw_base_hormiguero_x + 95, self.draw_base_hormiguero_y - 4
-            )
-            + TERMINAL.limegreen(".--'-\`|/-''--.")
-        )
-        print(
-            TERMINAL.move_xy(
-                self.draw_base_hormiguero_x + 96, self.draw_base_hormiguero_y - 3
-            )
-            + TERMINAL.limegreen("\`-._\|./.-'/")
-        )
-        print(
-            TERMINAL.move_xy(
-                self.draw_base_hormiguero_x + 97, self.draw_base_hormiguero_y - 2
-            )
-            + TERMINAL.limegreen(">`-._|/.-'<")
-        )
-        print(
-            TERMINAL.move_xy(
-                self.draw_base_hormiguero_x + 96, self.draw_base_hormiguero_y - 1
-            )
-            + TERMINAL.limegreen("'~|/~~|~~\|~'")
-        )
-        print(
-            TERMINAL.move_xy(
-                self.draw_base_hormiguero_x + 102, self.draw_base_hormiguero_y
-            )
-            + TERMINAL.limegreen("|")
-        )
-        print(
-            TERMINAL.move_xy(
-                self.draw_base_hormiguero_x + 91, self.draw_base_hormiguero_y - 9
-            )
-            + TERMINAL.bold(TERMINAL.limegreen("[SPACE] to byte the Leaf"))
-        )
+        print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 7, self.draw_base_hormiguero_y - 8)   
+            + TERMINAL.goldenrod1(TERMINAL.bold("COINS:" + str(self.points))))
+        print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 100, self.draw_base_hormiguero_y - 7)
+            + TERMINAL.limegreen(".\^/."))
+        print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 97, self.draw_base_hormiguero_y - 6)
+            + TERMINAL.limegreen("'. |`|/| ."))
+        print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 97, self.draw_base_hormiguero_y - 5)
+            + TERMINAL.limegreen("'|\|\|'|/|"))
+        print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 95, self.draw_base_hormiguero_y - 4)
+            + TERMINAL.limegreen(".--'-\`|/-''--."))
+        print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 96, self.draw_base_hormiguero_y - 3)
+            + TERMINAL.limegreen("\`-._\|./.-'/"))
+        print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 97, self.draw_base_hormiguero_y - 2)
+            + TERMINAL.limegreen(">`-._|/.-'<"))
+        print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 96, self.draw_base_hormiguero_y - 1)
+            + TERMINAL.limegreen("'~|/~~|~~\|~'"))
+        print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 102, self.draw_base_hormiguero_y)
+            + TERMINAL.limegreen("|"))
+        print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 91, self.draw_base_hormiguero_y - 9)
+            + TERMINAL.bold(TERMINAL.limegreen("[SPACE] to byte the Leaf")))
 
         self.draw_anthills()
+        self.draw_rewards()
+        self.draw_points()
 
         if self.food > 0:
             print(
@@ -143,7 +110,7 @@ class Clicker:
         print(TERMINAL.move_xy(self.draw_base_hormiguero_x, base - 3) + "     _/          \__" )
         print(TERMINAL.move_xy(self.draw_base_hormiguero_x, base - 2) + "   _/               \_" )
         print(TERMINAL.move_xy(self.draw_base_hormiguero_x, base - 1) + "  /                   \__")
-        print(TERMINAL.move_xy(self.draw_base_hormiguero_x, base) + " /                       \==============---------==========------===----------================" )
+        print(TERMINAL.move_xy(self.draw_base_hormiguero_x, base) +     " /                       \==============---------==========------===----------================" )
         
 
 
@@ -152,7 +119,7 @@ class Clicker:
     def loop(self):
         with TERMINAL.cbreak():
             val = ""
-            while val.lower() != "q":
+            while val.lower() != "k":
                 self.draw()
 
                 val = TERMINAL.inkey(timeout=1)
@@ -171,15 +138,13 @@ class Clicker:
                     if self.ant_x == 89:
                         self.load_food()
                     else:
-                        self.drop_food()
-                elif val.lower() == "r":
-                    self.drop_food()                
+                        self.drop_food()   
                 elif val.lower() == "1":
                     if not self.rewards[0].apply_reward(self):
                         continue
-                elif val.lower() == "2":
-                    if not self.rewards[1].apply_reward(self):
-                        continue
+                #elif val.lower() == "2":
+                 #   if not self.rewards[1].apply_reward(self):
+                  #      continue
 
                 self.draw_base_hormiguero_x = int((TERMINAL.width - self.draws_size_x) / 2)
                 self.draw_base_hormiguero_y = int((TERMINAL.height - self.draws_size_y) / 6 * 5)
@@ -191,12 +156,10 @@ class Clicker:
 
     def can_load_food(self):
         return (
-            #self.ant_x == 89
-            #and
             self.ant_y == -1
             and self.load < self.max_load
             and self.food >= 1
-        )
+)
 
     def load_food(self):
         if self.can_load_food():
@@ -204,51 +167,45 @@ class Clicker:
             self.food -= 1
 
     def can_drop_food(self):
-        return (
-            self.load > 0 and self.ant_x > 10 and self.ant_x < 16 and self.ant_y == -5
-        )
+        return (self.load > 0 and self.ant_x > 10 and self.ant_x < 16 and self.ant_y == -5)
 
     def drop_food(self):
         if self.can_drop_food():
+            if self.load + self.points > 500:
+                self.load -= (self.load + self.points) - 500
+
             self.points += self.load
+            debug("self.load:", repr(self.load))
             self.load = 0
 
     def draw_points(self):
-        print(
-            TERMINAL.move_xy(
-                self.draw_base_hormiguero_x + 6, self.draw_base_hormiguero_y - 8
-            )
-            + TERMINAL.goldenrod1(TERMINAL.bold(f"POINTS: {self.points}"))
-        )
-        if self.points < 100:
-            if self.points > 0:   
-                print(
-                    TERMINAL.move_xy(
-                        self.draw_base_hormiguero_x + 5, self.draw_base_hormiguero_y
-                    )
-                    + TERMINAL.forestgreen("█")
-                )
-            if self.points >= 5:
-                print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 6, self.draw_base_hormiguero_y) +
-                       TERMINAL.forestgreen("█"))
-            if self.points >= 10:
-                print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 7, self.draw_base_hormiguero_y) +
-                       TERMINAL.forestgreen("█"))
-            if self.points >= 15:
-                print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 5, self.draw_base_hormiguero_y - 1) +
-                       TERMINAL.forestgreen("█"))
-            if self.points >= 20:
-                print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 6, self.draw_base_hormiguero_y - 1) +
-                       TERMINAL.forestgreen("█"))
-            if self.points >= 30:
-                print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 8, self.draw_base_hormiguero_y) +
-                       TERMINAL.forestgreen("█"))
-            if self.points >= 40:
-                print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 9, self.draw_base_hormiguero_y) +
-                       TERMINAL.forestgreen("█"))
-            if self.points >= 45:
-                print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 7, self.draw_base_hormiguero_y - 1) +
-                       TERMINAL.forestgreen("█"))
+
+        print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 6, self.draw_base_hormiguero_y - 8)
+                + TERMINAL.goldenrod1(TERMINAL.bold(f"POINTS: {self.points}")))
+
+        if self.points > 0:
+            print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 5, self.draw_base_hormiguero_y)
+                + TERMINAL.forestgreen("█"))
+        if self.points >= 5:
+            print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 6, self.draw_base_hormiguero_y) +                       TERMINAL.forestgreen("█"))
+        if self.points >= 10:
+            print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 7, self.draw_base_hormiguero_y) +
+                TERMINAL.forestgreen("█"))
+        if self.points >= 15:
+            print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 5, self.draw_base_hormiguero_y - 1) +
+                TERMINAL.forestgreen("█"))
+        if self.points >= 20:
+            print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 6, self.draw_base_hormiguero_y - 1) +
+                TERMINAL.forestgreen("█"))
+        if self.points >= 30:
+            print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 8, self.draw_base_hormiguero_y) +
+                TERMINAL.forestgreen("█"))
+        if self.points >= 40:
+            print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 9, self.draw_base_hormiguero_y) +
+                TERMINAL.forestgreen("█"))
+        if self.points >= 45:
+            print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 7, self.draw_base_hormiguero_y - 1) +
+                TERMINAL.forestgreen("█"))
                 
                        
         
