@@ -1,6 +1,10 @@
 #!/usr/bin/fades
 
-import blessed  # fades
+import blessed # fades
+import time
+
+from Rewards.BagReward import BagReward
+from Rewards.Reward import RewardStatus
 
 TERMINAL = blessed.Terminal()
 
@@ -17,12 +21,14 @@ class Clicker:
         self.ant_x = 11
         self.ant_y = -5
         self.food = 0
+        self.terminal = TERMINAL
         self.load = 0
         self.points = 0
         self.max_load = 1
 
     def draw(self):
         print(TERMINAL.clear())
+        self.draw_rewards()
         print(
             TERMINAL.move_xy(
                 self.ant_x + self.draw_base_hormiguero_x,
@@ -144,6 +150,11 @@ class Clicker:
             )
 
 
+    def draw_rewards(self):
+        BagReward().draw(self.terminal, RewardStatus.NOT_PURCHASED)
+
+
+
     def loop(self):
         with TERMINAL.cbreak():
             val = ""
@@ -168,7 +179,11 @@ class Clicker:
                     else:
                         self.drop_food()
                 elif val.lower() == "r":
-                    self.drop_food()
+                    self.drop_food()                
+                elif val.lower() == "1":
+                    reward = BagReward()
+                    if not reward.apply_reward(self):
+                        continue
 
                 self.draw_base_hormiguero_x = int((TERMINAL.width - self.draws_size_x) / 2)
                 self.draw_base_hormiguero_y = int((TERMINAL.height - self.draws_size_y) / 6 * 5)
