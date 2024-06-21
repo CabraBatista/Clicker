@@ -1,18 +1,18 @@
 from Rewards.Reward import Reward, RewardStatus
 
 
-class BagReward(Reward):
+class AnthillReward(Reward):
     def __init__(self) -> None:
         super().__init__()
-        self.price = 5
-        self.name = "Bag"
+        self.price = 15
+        self.name = "Anthill"
         self.description = ""
         
 
     def apply_reward(self, clicker) -> bool:
         if clicker.points >= self.price:
-            clicker.max_load += 5
             clicker.points -= self.price
+            clicker.anthills += 1
             self.reward_status = RewardStatus.PURCHASED
         else:
             self.reward_status = RewardStatus.NO_MONEY

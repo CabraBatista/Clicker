@@ -1,4 +1,5 @@
 from enum import Enum
+import threading
 
 class RewardStatus(Enum):
     PURCHASED = 1,
@@ -11,22 +12,25 @@ class Reward:
         self.price = None
         self.name = None
         self.description = None
+        self.reward_status = RewardStatus.NOT_PURCHASED
 
-    def draw(self, terminal, status: RewardStatus) -> None:
-        self.x = 0
-        self.y = 0
-
-
-        box_length = len(self.name) + 6
+    def draw(self, terminal, reward_number) -> None:
+        box_length = len(self.name)*3
         color = terminal.yellow
-        if status == RewardStatus.PURCHASED:
+        if self.reward_status == RewardStatus.PURCHASED:
             color = terminal.green
-        elif status == RewardStatus.NOT_PURCHASED:
-            color = terminal.yellow
-        else:
+        elif self.reward_status == RewardStatus.NO_MONEY:
             color = terminal.red
 
-        print(terminal.move_xy(0, 0) + color(" " + "-"*box_length))
-        print(terminal.move_xy(0, 1) + color("|" + " "*len(self.name) + self.name + " "*len(self.name) + "|" ))
-        print(terminal.move_xy(0, 2) + color(" " + "-"*box_length))
+        print(terminal.move_xy(reward_number * 20, 0) + color(" " + "-"*box_length))
+        print(terminal.move_xy(reward_number * 20, 1) + color("|" + " "*len(self.name) + self.name + " "*len(self.name) + "|" ))
+        print(terminal.move_xy(reward_number * 20, 2) + color(" " + "-"*box_length))
+
+    
+    def set_not_purchased(self):
+        self.reward_status = RewardStatus.NOT_PURCHASED
+
+    def start_purchased_timer(self):
+        timer = threading.Timer(1.0, self.set_not_purchased)
+        timer.start()
 

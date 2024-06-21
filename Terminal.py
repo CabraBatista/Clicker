@@ -4,7 +4,7 @@ import blessed # fades
 import time
 
 from Rewards.BagReward import BagReward
-from Rewards.Reward import RewardStatus
+from Rewards.AnthillReward import AnthillReward
 
 TERMINAL = blessed.Terminal()
 
@@ -23,7 +23,12 @@ class Clicker:
         self.food = 0
         self.terminal = TERMINAL
         self.load = 0
-        self.points = 0
+        self.points = 100
+        self.max_load = 1
+        self.anthills = 1
+        self.rewards = []
+        self.rewards.append(BagReward())
+        self.rewards.append(AnthillReward())
         self.max_load = 1
 
     def draw(self):
@@ -93,35 +98,8 @@ class Clicker:
             + TERMINAL.bold(TERMINAL.limegreen("[SPACE] to byte the Leaf"))
         )
 
-        print(
-            TERMINAL.move_xy(
-                self.draw_base_hormiguero_x, self.draw_base_hormiguero_y - 4
-            )
-            + "       _/======\_"
-        )
-        print(
-            TERMINAL.move_xy(
-                self.draw_base_hormiguero_x, self.draw_base_hormiguero_y - 3
-            )
-            + "     _/          \__"
-        )
-        print(
-            TERMINAL.move_xy(
-                self.draw_base_hormiguero_x, self.draw_base_hormiguero_y - 2
-            )
-            + "   _/               \_"
-        )
-        print(
-            TERMINAL.move_xy(
-                self.draw_base_hormiguero_x, self.draw_base_hormiguero_y - 1
-            )
-            + "  /                   \__"
-        )
-        print(
-            TERMINAL.move_xy(self.draw_base_hormiguero_x, self.draw_base_hormiguero_y)
-            + " /                       \==============---------==========------===----------================"
-        )
-        self.draw_points()
+        self.draw_anthills()
+
         if self.food > 0:
             print(
                 TERMINAL.move_xy(
@@ -151,7 +129,23 @@ class Clicker:
 
 
     def draw_rewards(self):
-        BagReward().draw(self.terminal, RewardStatus.NOT_PURCHASED)
+        for i, reward in enumerate(self.rewards):
+            reward.draw(self.terminal, i)
+
+
+    def draw_anthills(self):
+        for i in range(self.anthills):
+            self.draw_anthill(i)
+
+    def draw_anthill(self, anthill_number = 0):
+        base = self.draw_base_hormiguero_y - anthill_number * 7
+        print(TERMINAL.move_xy(self.draw_base_hormiguero_x, base - 4) + "       _/======\_" )
+        print(TERMINAL.move_xy(self.draw_base_hormiguero_x, base - 3) + "     _/          \__" )
+        print(TERMINAL.move_xy(self.draw_base_hormiguero_x, base - 2) + "   _/               \_" )
+        print(TERMINAL.move_xy(self.draw_base_hormiguero_x, base - 1) + "  /                   \__")
+        print(TERMINAL.move_xy(self.draw_base_hormiguero_x, base) + " /                       \==============---------==========------===----------================" )
+        
+
 
 
 
@@ -181,8 +175,10 @@ class Clicker:
                 elif val.lower() == "r":
                     self.drop_food()                
                 elif val.lower() == "1":
-                    reward = BagReward()
-                    if not reward.apply_reward(self):
+                    if not self.rewards[0].apply_reward(self):
+                        continue
+                elif val.lower() == "2":
+                    if not self.rewards[1].apply_reward(self):
                         continue
 
                 self.draw_base_hormiguero_x = int((TERMINAL.width - self.draws_size_x) / 2)
