@@ -6,6 +6,7 @@ import time
 from Rewards.BagReward import BagReward
 from Rewards.AnthillReward import AnthillReward
 from Rewards.BiterAntReward import BiterAntReward
+from Rewards.CarrierAntReward import CarrierAntReward
 
 TERMINAL = blessed.Terminal()
 
@@ -29,14 +30,19 @@ class Clicker:
         self.food = 0
         self.terminal = TERMINAL
         self.load = 0
-        self.points = 10
+        self.points = 0
         self.max_load = 1
         self.biter_ant = 0
         self.anthills = 1
+        self.biter_ant_reward = BiterAntReward()
+        self.carrier_ant_reward = CarrierAntReward()
         self.rewards = []
         self.rewards.append(BagReward())
-        self.rewards.append(BiterAntReward())
+        self.rewards.append(self.biter_ant_reward)
+        self.rewards.append(self.carrier_ant_reward)
         self.rewards.append(AnthillReward())
+
+        self.base_time = time.time()
 
     def draw(self):
         print(TERMINAL.clear())
@@ -70,35 +76,19 @@ class Clicker:
         self.draw_points()
 
         self.draw_rewards()
+        self.draw_baiter_ants()
 
 
 
         if self.food > 0:
-            print(
-                TERMINAL.move_xy(
-                    self.draw_base_hormiguero_x + 92, self.draw_base_hormiguero_y - 1
-                )
-                + TERMINAL.forestgreen("█")
-                + TERMINAL.move_xy(
-                    self.draw_base_hormiguero_x + 91, self.draw_base_hormiguero_y - 2
-                )
-                + TERMINAL.forestgreen("x" + str(self.food))
-            )
+            print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 92, self.draw_base_hormiguero_y - 1)
+                + TERMINAL.forestgreen("█")+ TERMINAL.move_xy(self.draw_base_hormiguero_x + 91, self.draw_base_hormiguero_y - 2)
+                + TERMINAL.forestgreen("x" + str(int(self.food))))
         if self.load > 0:
-            print(
-                TERMINAL.move_xy(
-                    self.ant_x + self.draw_base_hormiguero_x,
-                    self.draw_base_hormiguero_y + self.ant_y - 1,
-                )
-                + TERMINAL.forestgreen("█")
-            )
-            print(
-                TERMINAL.move_xy(
-                    self.ant_x + self.draw_base_hormiguero_x,
-                    self.draw_base_hormiguero_y + self.ant_y - 2,
-                )
-                + str(self.load)
-            )
+            print(TERMINAL.move_xy(self.ant_x + self.draw_base_hormiguero_x,self.draw_base_hormiguero_y + self.ant_y - 1,)
+                + TERMINAL.forestgreen("█"))
+            print(TERMINAL.move_xy(self.ant_x + self.draw_base_hormiguero_x,self.draw_base_hormiguero_y + self.ant_y - 2,)
+                + str(self.load))
 
 
     def draw_rewards(self):
@@ -116,19 +106,29 @@ class Clicker:
         print(TERMINAL.move_xy(self.draw_base_hormiguero_x, base - 3) + "     _/          \__" )
         print(TERMINAL.move_xy(self.draw_base_hormiguero_x, base - 2) + "   _/               \_" )
         print(TERMINAL.move_xy(self.draw_base_hormiguero_x, base - 1) + "  /                   \__")
-        print(TERMINAL.move_xy(self.draw_base_hormiguero_x, base) +     " /                       \==============---------==========------===----------================" )
+        print(TERMINAL.move_xy(self.draw_base_hormiguero_x, base) +     " /                       \==============---------==========------===----------===========##===" )
         
+    def on_update(self):
+        #Baiter Ants Function
+        new_time = time.time()
+        delta_t = new_time - self.base_time
+        self.base_time = new_time
 
+        rate = self.biter_ant_reward.amount / 10
+        self.food += rate * delta_t
+        debug("Delta T:", delta_t, "Self.Food:", self.food)
 
-
+        #Carrier Ant
+        
 
     def loop(self):
         with TERMINAL.cbreak():
             val = ""
             while val.lower() != "k":
                 self.draw()
+                self.on_update()
 
-                val = TERMINAL.inkey(timeout=1)
+                val = TERMINAL.inkey(timeout=0.5)
                 if val.lower() == " ":
                     if self.can_bite_leaf():
                         self.food += 1
@@ -150,6 +150,9 @@ class Clicker:
                         continue
                 elif val.lower() == "2":
                     if not self.rewards[1].apply_reward(self):
+                        continue
+                elif val.lower() == "3":
+                    if not self.rewards[2].apply_reward(self):
                         continue
                 #elif val.lower() == "4":
                  #   if not self.rewards[3].apply_reward(self):
@@ -187,13 +190,12 @@ class Clicker:
                 self.load -= (self.load + self.points) - 500
 
             self.points += self.load
-            debug("self.load:", repr(self.load))
             self.load = 0
 
     def draw_points(self):
 
         print(TERMINAL.move_xy(self.draw_base_hormiguero_x + 6, self.draw_base_hormiguero_y - 8)
-                + TERMINAL.goldenrod1(TERMINAL.bold(f"POINTS: {self.points}")))
+                + TERMINAL.goldenrod1(TERMINAL.bold(f"COINS: {self.points}")))
         
         almacenamiento = [
             (0, 3, 0, TERMINAL.forestgreen("█")),
@@ -262,9 +264,38 @@ class Clicker:
         
         for limit, x, y, char in almacenamiento:
             if self.points > limit:
-                print(TERMINAL.move_xy(self.draw_base_hormiguero_x + x, self.draw_base_hormiguero_y + y) +
-                      char)
+                print(TERMINAL.move_xy(self.draw_base_hormiguero_x + x, self.draw_base_hormiguero_y + y) + char)
         
+    def draw_baiter_ants(self):
+        almacenamiento = [
+            (0, 106, -7, TERMINAL.darkorange4("o")),
+            (5, 110, -4, TERMINAL.orange4("o")),
+            (10, 94, -5, TERMINAL.sienna("o")),
+            (15, 112, -1, TERMINAL.darkorange4("o")),
+            (25, 104, 0, TERMINAL.orange4("o")),
+            (35, 94, -3, TERMINAL.sienna("o")),
+            (45, 97, 0, TERMINAL.darkorange4("o")),
+            (55, 97, -8, TERMINAL.orange4("o")),
+            (70, 110, 1, TERMINAL.sienna("o")),
+            (85, 111, -6, TERMINAL.darkorange4("o")),
+            (100, 115, -3, TERMINAL.orange4("o")),
+            (115, 103, 2, TERMINAL.sienna("o")),
+            (135, 91, -4, TERMINAL.darkorange4("o")),
+            (155, 109, -8, TERMINAL.orange4("o")),
+            (175, 104, -5, TERMINAL.sienna("o")),
+            (195, 100, -2, TERMINAL.darkorange4("o")),
+            (220, 99, -4, TERMINAL.orange4("o")),
+            (245, 105, -3, TERMINAL.sienna("o")),
+            (275, 93, -7, TERMINAL.darkorange4("o")),
+            (300, 100, -6, TERMINAL.orange4("o")),
+            (330, 102, -8, TERMINAL.sienna("o ")),
+            
+        ]
+
+        for limit, x, y, char in almacenamiento:
+            if self.biter_ant_reward.amount > limit:
+                print(TERMINAL.move_xy(self.draw_base_hormiguero_x + x, self.draw_base_hormiguero_y + y) + char)
+
     def walk(self):
         if self.ant_x >= 10 and self.ant_x <= 16:
             self.ant_y = -5
