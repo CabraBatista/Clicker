@@ -4,7 +4,7 @@ from Rewards.Reward import Reward, RewardStatus
 class AnthillReward(Reward):
     def __init__(self) -> None:
         super().__init__()
-        self.price = 15
+        self.price = 500
         self.name = "Anthill"
         self.description = ""
         
@@ -15,6 +15,10 @@ class AnthillReward(Reward):
             clicker.anthills += 1
             self.amount += 1
             self.reward_status = RewardStatus.PURCHASED
+            if clicker.anthills < 8:
+                self.price = clicker.anthills * 500
+            else:
+                self.price = "X"
         else:
             self.reward_status = RewardStatus.NO_MONEY
 

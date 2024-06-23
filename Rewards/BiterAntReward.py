@@ -13,7 +13,7 @@ class BiterAntReward(Reward):
         if clicker.points >= self.price:
             clicker.points -= self.price
             self.reward_status = RewardStatus.PURCHASED
-            self.price += round(self.price / 100 * 35)
+            self.price += round(self.price / 100 * 20)
             hormigas = round(clicker.biter_ant / 100 * 15)
             if hormigas == 0:
                 self.amount += 1
